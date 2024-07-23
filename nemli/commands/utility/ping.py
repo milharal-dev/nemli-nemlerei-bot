@@ -8,6 +8,4 @@ from nemli import bot
 @commands.cooldown(1, 10, commands.BucketType.channel)
 async def ping_command(interaction: nextcord.Interaction):
     print(f"INFO: The ping command has been called by: @{interaction.user}")
-    await interaction.response.send_message(
-        f"Pong! **{round(bot.latency * 1000, 1)}**ms"
-    )
+    await interaction.response.send_message(f"Pong! **{round(bot.latency * 1000, 1)}**ms")
