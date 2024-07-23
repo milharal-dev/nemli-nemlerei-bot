@@ -5,7 +5,7 @@ from nemli.main import bot
 from nemli.config import settings
 
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
-client = OpenAI(api_key=settings.openai_api_key)
+openai_client = OpenAI(api_key=settings.openai_api_key)
 
 # This is the slash command that will be used to create a summary of the last 100 messages in the channel, the main feature of this bot
 @bot.slash_command(
@@ -27,7 +27,7 @@ async def summarize_command(interaction: nextcord.Interaction, message_count: in
     messages_content = "\n".join([f"{msg.author}: {msg.content}" for msg in messages if msg.content]) # Here we are creating a string with the content of the last 100 messages
 
     # Here we call the OpenAI API to create a summary of the last 100 messages in the channel with the previously created variables
-    response = client.chat.completions.create(model="gpt-3.5-turbo-16k",
+    response = openai_client.chat.completions.create(model="gpt-3.5-turbo-16k",
     messages=[
         {"role": "system", "content": "Você é um assistente que resume conversas."},
         {"role": "user", "content": f"Resuma a seguinte conversa:\n{messages_content}"}
