@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Um bot de discord para criar resumos baseado nas últimas mensagens de um canal"
 authors = [
     {name = "Manoel Vilela", email = "manoel_vilela@engineer.com"},
+    {name = "Mateus Reis", email = "mateuspsvreis@gmail.com"},
 ]
 dependencies = [
     "requests>=2.32.3",
