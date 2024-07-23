@@ -1,0 +1,51 @@
+[project]
+name = "nemli"
+version = "0.1.0"
+description = "Um bot de discord para criar resumos baseado nas últimas mensagens de um canal"
+authors = [
+    {name = "Manoel Vilela", email = "manoel_vilela@engineer.com"},
+]
+dependencies = [
+    "discord-py>=2.4.0",
+    "requests>=2.32.3",
+    "pydantic-settings>=2.3.4",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest>=8.3.1",
+    "mypy>=1.11.0",
+    "flake8>=7.1.0",
+    "black>=24.4.2",
+    "pytest-cov>=5.0.0",
+    "types-requests>=2.32.0.20240712",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+exclude =  [".venv"]
+
+
+[tool.pdm.scripts]
+lint = {composite = ["flake8", "mypy"]}
+test = "pytest -vv -p no:cacheprovider --cov=nemli --cov-report term -k"
+tests = {composite = ["test test"]}
+format = "black nemli/ tests/"
+check = {composite = ["lint nemli/", "test test"]}
+
+
+[project.scripts]
+nemli = "nemli.main:run"
+
+
