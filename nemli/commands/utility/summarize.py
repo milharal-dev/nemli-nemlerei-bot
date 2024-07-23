@@ -1,6 +1,7 @@
 import nextcord
-from openai import OpenAI
 from nextcord.ext import commands
+from openai import OpenAI
+
 from nemli import bot
 from nemli.config import settings
 
@@ -10,9 +11,7 @@ openai_client = OpenAI(api_key=settings.openai_api_key)
 
 # This is the slash command that will be used to create a summary of
 # the last 20 to 1000 messages in the channel, the main feature of this bot
-@bot.slash_command(
-    name="summarize", description="Cria um resumo das últimas 100 mensagens no canal"
-)
+@bot.slash_command(name="summarize", description="Cria um resumo das últimas 100 mensagens no canal")
 @commands.cooldown(1, 10, commands.BucketType.channel)
 async def summarize_command(
     interaction: nextcord.Interaction,
@@ -31,17 +30,11 @@ async def summarize_command(
     await interaction.response.defer(with_message=True)
 
     try:
-        channel = (
-            interaction.channel
-        )  # Here we are getting the channel where the command was called
+        channel = interaction.channel  # Here we are getting the channel where the command was called
         # Here we are getting the last 100 messages in the channel
         messages = await channel.history(limit=message_count).flatten()  # type: ignore
         messages_content = "\n".join(
-            [
-                f"{msg.author}: {msg.content}"
-                for msg in messages
-                if msg.content and msg.author != bot.user
-            ]
+            [f"{msg.author}: {msg.content}" for msg in messages if msg.content and msg.author != bot.user]
         )  # Here we are creating a string with the content of the last 100 messages
 
         # Here we call the OpenAI API to create a summary of the last 100
@@ -64,10 +57,8 @@ async def summarize_command(
 
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
+        await interaction.followup.send(f"## Resumo das últimas {message_count} mensagens:\n{summary[:1900]}")
+    except Exception:
         await interaction.followup.send(
-            f"## Resumo das últimas {message_count} mensagens:\n{summary[:1900]}"
-        )
-    except Exception as e:
-        await interaction.followup.send(
-            f"Ocorreu um erro na aplicação. Contate um administrador para resolver o problema."
+            "Ocorreu um erro na aplicação. Contate um administrador para resolver o problema."
         )

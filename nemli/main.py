@@ -20,9 +20,7 @@ async def on_ready():
 @bot.event
 async def on_slash_command_error(interaction: nextcord.Interaction, error):
     if isinstance(error, commands.CommandOnCooldown):
-        await interaction.response.send_message(
-            f"**Try after {round(error.retry_after, 2)} seconds**"
-        )
+        await interaction.response.send_message(f"**Try after {round(error.retry_after, 2)} seconds**")
 
 
 # This function is responsible for loading the slash commands from the
