@@ -1,11 +1,12 @@
 import nextcord
 from nextcord.ext import commands
-from nemli.config import settings
+from nltk import download as nltk_download
 
 from nemli import bot
 from nemli.commands.utility.help import help_command
 from nemli.commands.utility.ping import ping_command
 from nemli.commands.utility.summarize import summarize_command
+from nemli.config import settings
 
 
 # This function is called when the bot is ready to be used
@@ -43,5 +44,6 @@ def load_commands():
 
 # This is the entrypoint for the bot, it will run the bot and load the slash commands
 def run():
+    nltk_download("stopwords")  # Download nltk stopwords
     load_commands()
     bot.run(settings.discord_token)

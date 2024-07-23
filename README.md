@@ -8,7 +8,6 @@ Como base do projeto, será usado este [template].
 
 [template]: https://github.com/aadibhoyar/python-discord-bot-template
 
-
 # dev
 
 ## Requisitos
@@ -50,7 +49,6 @@ Rodar formatador em todo código:
 pdm format
 ```
 
-
 ## Executar projeto
 
 Para rodar o projeto, após executado `pdm install`, você pode chamar:
@@ -71,7 +69,6 @@ pdm add <dependency>
 
 Ou, caso seja uma dependencia de desenvolvimento, como
 pytest/mypy/flake8, você pode usar usar:
-
 
 ```
 pdm add --dev <dependency>
