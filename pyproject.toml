@@ -41,7 +41,7 @@ exclude =  [".venv"]
 
 [tool.pdm.scripts]
 lint = {composite = ["flake8", "mypy"]}
-test = "pytest -vv -p no:cacheprovider --cov=nemli --cov-report term -k"
+test = "pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k"
 tests = {composite = ["test test"]}
 format = "black nemli/ tests/"
 check = {composite = ["lint nemli/", "test test"]}

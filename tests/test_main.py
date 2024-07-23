@@ -4,8 +4,8 @@ import pytest
 @pytest.fixture
 def env_fixture(monkeypatch):
     """Simulate proper env vars"""
-    monkeypatch.setenv("NEMLI__DISCORD__TOKEN", "xxx")
-    monkeypatch.setenv("NEMLI__DISCORD__PREFIX", "yyy",)
+    monkeypatch.setenv("NEMLI_DISCORD_TOKEN", "xxx")
+    monkeypatch.setenv("NEMLI_OPENAI_API_KEY", "yyy")
     yield
 
 
