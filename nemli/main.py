@@ -7,7 +7,7 @@ from nemli.config import settings
 
 client = commands.Bot(
     intents=discord.Intents.default(),
-    command_prefix=settings.DISCORD_PREFIX
+    command_prefix=settings.discord.prefix
 )
 client.remove_command("help")  # to remove the default boring help command
 
@@ -137,7 +137,7 @@ async def ping(ctx):
 
 
 def run():
-    client.run(settings.DISCORD_TOKEN)
+    client.run(settings.discord.token)
 
 
 if __name__ == "__main__":
