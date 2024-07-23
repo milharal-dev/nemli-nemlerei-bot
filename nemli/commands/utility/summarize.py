@@ -26,6 +26,10 @@ async def summarize_command(
     ),
 ):
     print(f"INFO: The summarize command has been called by: @{interaction.user}")
+    
+    # We defer the response so we avoid timeout errors due to AI processing which could take longer than three seconds
+    await interaction.response.defer(with_message=True)
+    
     channel = (
         interaction.channel
     )  # Here we are getting the channel where the command was called
@@ -45,7 +49,7 @@ async def summarize_command(
             {"role": "system", "content": "Você é um assistente que resume conversas."},
             {
                 "role": "user",
-                "content": f"Resuma a seguinte conversa:\n{messages_content}",
+                "content": f"Resuma a seguinte conversa em bullet points, sendo detalhista, separando as opiniões de cada usuário e mencionando-os quando falarem algo relevante:\n{messages_content}",
             },
         ],
         max_tokens=1000,
@@ -54,6 +58,6 @@ async def summarize_command(
 
     # Here we are getting the summary from the response and sending it to the user
     summary = response.choices[0].message.content.strip()  # type: ignore
-    await interaction.response.send_message(
+    await interaction.followup.send(
         f"## Resumo das últimas {message_count} mensagens:\n{summary}"
     )
