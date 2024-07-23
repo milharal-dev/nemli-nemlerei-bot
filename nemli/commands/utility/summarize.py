@@ -21,7 +21,7 @@ async def summarize_command(
         required=False,
         min_value=20,
         max_value=1000,
-        default=200,
+        default=settings.discord_max_messages,
     ),
 ):
     print(f"INFO: The summarize command has been called by: @{interaction.user}")
