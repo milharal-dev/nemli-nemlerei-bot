@@ -1,12 +1,11 @@
-import os
 import nextcord
 from openai import OpenAI
 from nextcord.ext import commands
 from nemli.main import bot
+from nemli.config import settings
 
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
-OPENAI_API_KEY = os.getenv('NEMLI__OPENAI__API__KEY')
-client = OpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(api_key=settings.openai_api_key)
 
 # This is the slash command that will be used to create a summary of the last 100 messages in the channel, the main feature of this bot
 @bot.slash_command(

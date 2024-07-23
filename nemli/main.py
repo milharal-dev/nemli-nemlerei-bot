@@ -1,12 +1,6 @@
 import nextcord
 from nextcord.ext import commands
-import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-DISCORD_TOKEN = os.getenv('NEMLI__DISCORD__TOKEN')
+from nemli.config import settings
 
 intents = nextcord.Intents.default()
 intents.message_content = True  # Enable message content intent, this is important for the bot to be able to respond to messages
@@ -49,4 +43,4 @@ def load_commands():
 # This is the entrypoint for the bot, it will run the bot and load the slash commands
 def run():
     load_commands()
-    bot.run(DISCORD_TOKEN)
+    bot.run(settings.discord_token)
