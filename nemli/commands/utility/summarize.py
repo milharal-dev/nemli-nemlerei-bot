@@ -30,36 +30,44 @@ async def summarize_command(
     # We defer the response so we avoid timeout errors due to AI processing which could take longer than three seconds
     await interaction.response.defer(with_message=True)
 
-    channel = (
-        interaction.channel
-    )  # Here we are getting the channel where the command was called
-    # Here we are getting the last 100 messages in the channel
-    messages = await channel.history(limit=message_count).flatten()  # type: ignore
-    messages_content = "\n".join(
-        [
-            f"{msg.author}: {msg.content}"
-            for msg in messages
-            if msg.content and msg.author != bot.user
-        ]
-    )  # Here we are creating a string with the content of the last 100 messages
+    try:
+        channel = (
+            interaction.channel
+        )  # Here we are getting the channel where the command was called
+        # Here we are getting the last 100 messages in the channel
+        messages = await channel.history(limit=message_count).flatten()  # type: ignore
+        messages_content = "\n".join(
+            [
+                f"{msg.author}: {msg.content}"
+                for msg in messages
+                if msg.content and msg.author != bot.user
+            ]
+        )  # Here we are creating a string with the content of the last 100 messages
 
-    # Here we call the OpenAI API to create a summary of the last 100
-    # messages in the channel with the previously created variables
-    response = openai_client.chat.completions.create(
-        model="gpt-3.5-turbo-16k",
-        messages=[
-            {"role": "system", "content": "Você é um assistente que resume conversas."},
-            {
-                "role": "user",
-                "content": f"Resuma a seguinte conversa em bullet points, sendo detalhista, depois, se relevante, escreva um pequeno parágrafo de conclusão, separando as opiniões de cada usuário em até cinco palavras:\n{messages_content}",
-            },
-        ],
-        max_tokens=4000,
-        temperature=0.5,
-    )
+        # Here we call the OpenAI API to create a summary of the last 100
+        # messages in the channel with the previously created variables
+        response = openai_client.chat.completions.create(
+            model="gpt-3.5-turbo-16k",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Você é um assistente que resume conversas.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Resuma a seguinte conversa em bullet points, sendo detalhista, depois, se relevante, escreva um pequeno parágrafo de conclusão, separando as opiniões de cada usuário em até cinco palavras, lembrando de não estourar um máximo de 1900 caracteres na sua resposta:\n{messages_content}",
+                },
+            ],
+            max_tokens=4000,
+            temperature=0.5,
+        )
 
-    # Here we are getting the summary from the response and sending it to the user
-    summary = response.choices[0].message.content.strip()  # type: ignore
-    await interaction.followup.send(
-        f"## Resumo das últimas {message_count} mensagens:\n{summary}"
-    )
+        # Here we are getting the summary from the response and sending it to the user
+        summary = response.choices[0].message.content.strip()  # type: ignore
+        await interaction.followup.send(
+            f"## Resumo das últimas {message_count} mensagens:\n{summary[:1900]}"
+        )
+    except Exception as e:
+        await interaction.followup.send(
+            f"Ocorreu um erro na aplicação. Contate um administrador para resolver o problema."
+        )
