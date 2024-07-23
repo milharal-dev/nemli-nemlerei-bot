@@ -1,144 +1,52 @@
-import discord
-from discord.ext import commands
-import requests
+import nextcord
+from nextcord.ext import commands
+import os
+from dotenv import load_dotenv
 
-from nemli.config import settings
+# Load environment variables
+load_dotenv()
 
+DISCORD_TOKEN = os.getenv('NEMLI__DISCORD__TOKEN')
 
-client = commands.Bot(
-    intents=discord.Intents.default(),
-    command_prefix=settings.discord.prefix
-)
-client.remove_command("help")  # to remove the default boring help command
+intents = nextcord.Intents.default()
+intents.message_content = True  # Enable message content intent, this is important for the bot to be able to respond to messages
 
+# Initialize bot instance
+bot = commands.Bot(command_prefix="!", intents=intents)  # The command_prefix is a placeholder here, we won't be using it
 
-@client.event
+# This function is called when the bot is ready to be used
+@bot.event
 async def on_ready():
-    print("We have logged in as {0.user} ".format(client))
-    activity = discord.Game(
-        name=".help", type=3
-    )  # this is to writing prefix in playing a game.(optional)
-    await client.change_presence(
-        status=discord.Status.online, activity=activity
-    )  # this is for making the status as an online and writing prefix in playing a game.(optional)
+    print(f"Application/Bot online as {bot.user}")
+    activity = nextcord.Game("/help")
+    await bot.change_presence(status=nextcord.Status.online, activity=activity)
 
-
-# Help commands
-@client.group(invoke_without_command=True)
-async def help(ctx):
-    embed = discord.Embed(title="IndianDesiMemer Help Center ✨", color=0xF49726)
-    embed.add_field(
-        name="Command Categories :",
-        value="🐸 `memes    :` Image generation with a memey twist.\n"
-        + "🔧 `utility  :` Bot utility zone\n😏 `nsfw     :` Image generation with a memey twist.\n\nTo view the commands of a category, send `.help <category>`",  # noqa
-        inline=False,
-    )
-    embed.set_footer(
-        icon_url=ctx.author.avatar_url,
-        text="Help requested by: {}".format(ctx.author.display_name),
-    )
-    await ctx.send(embed=embed)
-
-
-# Sub-help command of memes
-@help.command()
-async def memes(ctx):
-    embed = discord.Embed(
-        title="IndianDesiMemer Help Center ✨",
-        description="Commands of **meme** \n`.meme:`Memes",
-        inline=False,
-    )
-    embed.set_footer(
-        icon_url=ctx.author.avatar_url,
-        text="Command requested by: {}".format(ctx.author.display_name),
-    )
-    await ctx.send(embed=embed)
-
-
-# Sub-help commands of nsfw
-@help.command()
-async def nsfw_sub(ctx):
-    embed = discord.Embed(
-        title="IndianDesiMemer Help Center ✨",
-        description="Commands of **nsfw** \n`.nsfw:`NSFW",
-        color=0xF49726,
-    )
-    embed.set_footer(
-        icon_url=ctx.author.avatar_url,
-        text="Command requested by: {}".format(ctx.author.display_name),
-    )
-    await ctx.send(embed=embed)
-
-
-# Sub-help commands of utility
-@help.command()
-async def utility(ctx):
-    embed = discord.Embed(
-        title="IndianDesiMemer Help Center ✨",
-        description="Commands of **utility** \n`.ping:`Latency",
-        color=0xF49726,
-    )
-    embed.set_footer(
-        icon_url=ctx.author.avatar_url,
-        text="Command requested by: {}".format(ctx.author.display_name),
-    )
-    await ctx.send(embed=embed)
-
-
-# it is used for the cooldown to prevent the bot from spam attack
-@client.event
-async def on_command_error(ctx, error):
+# This function provides error handling for slash commands, specifically for the cooldown feature
+@bot.event
+async def on_slash_command_error(interaction: nextcord.Interaction, error):
     if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send("**Try after {0} second ".format(round(error.retry_after, 2)))
+        await interaction.response.send_message(f"**Try after {round(error.retry_after, 2)} seconds**")
 
+# This function is responsible for loading the slash commands from the commands folder, providing a cleaner and more organized way to manage them
+def load_commands():
+    print("INFO: Loading commands...")
+    
+    import nemli.commands.utility.help  
+    import nemli.commands.utility.ping  
+    import nemli.commands.utility.summarize  
+    
+    belted_commands = [
+        nemli.commands.utility.help.help_command,
+        nemli.commands.utility.ping.ping_command,
+        nemli.commands.utility.summarize.summarize_command
+    ]
 
-# meme command
-@client.command()
-@commands.cooldown(
-    1, 10, commands.BucketType.channel
-)  # it is used for the cooldown to prevent the bot from spam attack
-async def meme(ctx):
+    for command in belted_commands:
+        bot.add_application_command(command)
+    
+    print("INFO: Commands loaded successfully!")
 
-    response = requests.get(
-        "https://meme-api.herokuapp.com/gimme/" + "memes" + "memes" + "?t=all?hot"
-    )
-
-    m = response.json()
-    postLink = m["postLink"]
-    subreddit = m["subreddit"]
-    title = m["title"]
-    imageUrl = m["url"]
-    upVote = m["ups"]
-    uv = str(upVote)
-
-    embed = discord.Embed(title=title, url=postLink, color=0xF49726)
-    embed.set_image(url=imageUrl)
-    embed.set_footer(text="\n👍\t" + uv + "  By :r/" + subreddit)
-    await ctx.send(embed=embed)
-
-
-# nsfw command
-@client.command()
-@commands.cooldown(1, 10, commands.BucketType.channel)
-async def nsfw(ctx):
-    if ctx.channel.is_nsfw():
-        print("nsfw work!!")
-    else:
-        print("You can use this command in a nsfw channel only !")
-
-
-# ping command
-@client.command()
-@commands.cooldown(
-    1, 10, commands.BucketType.channel
-)  # it is used for the cooldown to prevent the bot from spam attack
-async def ping(ctx):
-    await ctx.send("Ping! **{0}**ms".format(round(client.latency, 1)))
-
-
+# This is the entrypoint for the bot, it will run the bot and load the slash commands
 def run():
-    client.run(settings.discord.token)
-
-
-if __name__ == "__main__":
-    run()
+    load_commands()
+    bot.run(DISCORD_TOKEN)
