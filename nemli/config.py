@@ -8,7 +8,7 @@ class DiscordSettings(BaseModel):
 
 
 class NemliSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="NEMLI_", env_nested_delimiter='__')
+    model_config = SettingsConfigDict(env_prefix="NEMLI__", env_nested_delimiter='__')
 
     discord: DiscordSettings
 
