@@ -1,16 +1,13 @@
-from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class DiscordSettings(BaseModel):
-    token: str
-    prefix: str
-
-
 class NemliSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="NEMLI__", env_nested_delimiter='__')
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", env_prefix="NEMLI_"
+    )
 
-    discord: DiscordSettings
+    discord_token: str
+    openai_api_key: str
 
 
 settings = NemliSettings()  # type: ignore

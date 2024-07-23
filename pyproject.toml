@@ -4,11 +4,14 @@ version = "0.1.0"
 description = "Um bot de discord para criar resumos baseado nas últimas mensagens de um canal"
 authors = [
     {name = "Manoel Vilela", email = "manoel_vilela@engineer.com"},
+    {name = "Mateus Reis", email = "mateuspsvreis@gmail.com"},
 ]
 dependencies = [
-    "discord-py>=2.4.0",
     "requests>=2.32.3",
     "pydantic-settings>=2.3.4",
+    "openai>=1.37.0",
+    "nextcord>=2.6.0",
+    "setuptools>=71.1.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -39,7 +42,7 @@ exclude =  [".venv"]
 
 [tool.pdm.scripts]
 lint = {composite = ["flake8", "mypy"]}
-test = "pytest -vv -p no:cacheprovider --cov=nemli --cov-report term -k"
+test = "pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k"
 tests = {composite = ["test test"]}
 format = "black nemli/ tests/"
 check = {composite = ["lint nemli/", "test test"]}
