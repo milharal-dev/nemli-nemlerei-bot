@@ -7,6 +7,10 @@ from nemli.nlp.messages import clean_up_stopwords
 from nemli.schemas.messages import Message, ParserDiscordMessages
 
 
+def _is_summary_message(message_content: str) -> bool:
+    return message_content is not None and not message_content.lower().startswith("nemli:")
+
+
 def parse_discord_messages(
     user_bot: Optional[ClientUser] = None,
     messages: Optional[list[DiscordMessage]] = None,
@@ -29,7 +33,7 @@ def parse_discord_messages(
                 created_at=msg.created_at,
             )
 
-        if is_bot_message and message:
+        if is_bot_message and _is_summary_message(message_content):
             bot_message = message
         elif not is_bot_message and message:
             parsed_messages.append(message)
