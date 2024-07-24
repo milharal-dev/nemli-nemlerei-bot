@@ -18,6 +18,8 @@ from nemli.nlp.messages import clean_up_stopwords
             "A vantagem de ter péssima memória é divertir-se muitas vezes com as mesmas coisas boas como se fosse a primeira vez.",
             "vantagem ter péssima memória divertir-se muitas vezes mesmas coisas boas primeira vez .",
         ),
+        ("", ""),
+        (None, ""),
     ],
 )
 def test_clean_up_stopwords(message: str, expected: str):
