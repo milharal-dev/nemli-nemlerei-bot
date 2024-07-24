@@ -8,3 +8,4 @@ repos:
         always_run: true
         files: \.(py)$
         types: [python]
+        output_capturing: tee
