@@ -1,33 +1,51 @@
-#!/bin/bash
-# Combined pre-commit script
+#!/bin/sh
 
-set -e  # Exit immediately if a command exits with a non-zero status.
+(
+  echo "🔄 - Attempting to update dependencies..."
+  true;
+) &&
+pdm install ||
+(
+  echo "❌ - Some dependencies are out of date!"
+  false;
+)
 
-echo "🔄 - Attempting to update dependencies..."
-if stdbuf -oL -eL pdm install | tee /dev/tty; then
-  echo -e "✅ - All dependencies are up to date!\n\n🔄 - Attempting to format code now...." | stdbuf -oL -eL tee /dev/tty
-else
-  echo "❌ - Some dependencies are out of date!" | stdbuf -oL -eL tee /dev/tty
-  exit 1
-fi
+(
+  echo "✅ - All dependencies are up to date!"
+  echo -e "\n"
+  echo "🔄 - Attempting to format code now..."
+  true;
+) &&
+pdm format ||
+(
+  echo "❌ - Failed to format code!"
+  false;
+)
 
-if stdbuf -oL -eL pdm format | tee /dev/tty; then
-  echo -e "✅ - Files formatted successfully!\n\n🔄 - Attempting to linting now..." | stdbuf -oL -eL tee /dev/tty
-else
-  echo "❌ - Failed to format code!" | stdbuf -oL -eL tee /dev/tty
-  exit 1
-fi
+(
+  echo "✅ - Files formatted successfully!"
+  echo -e "\n"
+  echo "🔄 - Attempting to lint now..."
+  true; 
+) &&
+pdm lint nemli/ tests/ ||
+(
+  echo "❌ - Linting failed!"
+  false;
+)
 
-if stdbuf -oL -eL pdm lint nemli/ tests/ | tee /dev/tty; then
-  echo -e "✅ - Linting passed!\n\n🔄 - Attempting to run test suite now..." | stdbuf -oL -eL tee /dev/tty
-else
-  echo "❌ - Linting failed!" | stdbuf -oL -eL tee /dev/tty
-  exit 1
-fi
+(
+  echo "✅ - Linting passed!"
+  echo -e "\n"
+  echo "🔄 - Attempting to run test suite now..."
+  true;
+) &&
+pdm test ||
+(
+  echo "❌ - Test suite failed!"
+  false;
+)
 
-if stdbuf -oL -eL pdm test | tee /dev/tty; then
-  echo -e "✅ - Test suite passed!\n\n🚀 - I am now committing this!" | stdbuf -oL -eL tee /dev/tty
-else
-  echo "❌ - Test suite failed!" | stdbuf -oL -eL tee /dev/tty
-  exit 1
-fi
+echo "✅ - Test suite passed!" &&
+echo -e "\n" &&
+echo "🚀 - I am now committing this!"
