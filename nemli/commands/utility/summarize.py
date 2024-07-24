@@ -4,7 +4,8 @@ from openai import OpenAI
 
 from nemli import bot
 from nemli.config import settings
-from nemli.nlp.messages import clean_up_stopwords
+from nemli.schemas.messages import ParserDiscordMessages
+from nemli.services.messages import parse_discord_messages
 
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
 openai_client = OpenAI(api_key=settings.openai_api_key)
@@ -31,18 +32,31 @@ async def summarize_command(
     await interaction.response.defer(with_message=True)
 
     try:
-        channel = interaction.channel  # Here we are getting the channel where the command was called
-        # Here we are getting the last 100 messages in the channel
+        # Here we are getting the channel where the command was called
+        channel = interaction.channel
+        # Here we are getting the last {message_count} messages in the channel
         messages = await channel.history(limit=message_count).flatten()  # type: ignore
-        messages_content = "\n".join(
-            [
-                f"{msg.author}: {clean_up_stopwords(msg.content)}"
-                for msg in messages
-                if msg.content and msg.author != bot.user
-            ]
-        )  # Here we are creating a string with the content of the last 100 messages
 
-        # Here we call the OpenAI API to create a summary of the last 100
+        # Here we are creating a string with the content of the last {message_count} messages
+        parsed_discord_messages: ParserDiscordMessages = parse_discord_messages(bot.user, list(reversed(messages)))
+        if not (parsed_discord_messages.messages):
+            await interaction.followup.send("Não há mensagens suficientes para criar um resumo.")
+            return
+
+        # If we have bot message resume in the last {message_count} messages, we will not create a new summary
+        if bot_message := parsed_discord_messages.bot_message:
+            await interaction.followup.send(
+                (
+                    "Um resumo já foi criado recentemente, e se encontra em "
+                    f"{message_count - bot_message.position}/{message_count}:"
+                    f"[Último resumo]({bot_message.jump_url})"
+                )
+            )
+            return
+
+        messages_content = " ".join([f"{msg.author}: {msg.content}" for msg in parsed_discord_messages.messages or []])
+
+        # Here we call the OpenAI API to create a summary of the last {message_count}
         # messages in the channel with the previously created variables
         response = openai_client.chat.completions.create(
             model=settings.openai_model,
