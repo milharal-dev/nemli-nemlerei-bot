@@ -48,6 +48,7 @@ test = "pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --c
 tests = { composite = ["test test"] }
 format = "black nemli/ tests/"
 check = { composite = ["lint nemli/", "test test"] }
+all = { composite = ["format", "check"] }
 
 
 [project.scripts]
