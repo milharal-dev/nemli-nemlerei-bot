@@ -4,6 +4,7 @@ from openai import OpenAI
 
 from nemli import bot
 from nemli.config import settings
+from nemli.nlp.messages import clean_up_stopwords
 
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
 openai_client = OpenAI(api_key=settings.openai_api_key)
@@ -34,7 +35,11 @@ async def summarize_command(
         # Here we are getting the last 100 messages in the channel
         messages = await channel.history(limit=message_count).flatten()  # type: ignore
         messages_content = "\n".join(
-            [f"{msg.author}: {msg.content}" for msg in messages if msg.content and msg.author != bot.user]
+            [
+                f"{msg.author}: {clean_up_stopwords(msg.content)}"
+                for msg in messages
+                if msg.content and msg.author != bot.user
+            ]
         )  # Here we are creating a string with the content of the last 100 messages
 
         # Here we call the OpenAI API to create a summary of the last 100
