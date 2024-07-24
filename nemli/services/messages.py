@@ -5,6 +5,14 @@ from nextcord import Message as DiscordMessage
 
 from nemli.nlp.messages import clean_up_stopwords
 from nemli.schemas.messages import Message, ParserDiscordMessages
+from nemli.config import settings
+
+from loguru import logger
+
+
+def is_summary_link_message(message_content: str) -> bool:
+    logger.debug(message_content)
+    return message_content.lower().startswith("nemli:")
 
 
 def parse_discord_messages(
@@ -20,16 +28,17 @@ def parse_discord_messages(
 
         message = None
         if message_content := msg.content:
+            content = clean_up_stopwords(message_content) if settings.remove_stopwords else message_content
             message = Message(
                 id=msg.id,
                 position=i + 1,
                 author=f"**{msg.author.global_name or msg.author.name}**",
-                content=clean_up_stopwords(message_content),
+                content=content,
                 jump_url=msg.jump_url,
                 created_at=msg.created_at,
             )
 
-        if is_bot_message and message:
+        if is_bot_message and message and not is_summary_link_message(message_content):
             bot_message = message
         elif not is_bot_message and message:
             parsed_messages.append(message)

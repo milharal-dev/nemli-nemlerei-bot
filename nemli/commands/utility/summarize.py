@@ -7,6 +7,9 @@ from nemli.config import settings
 from nemli.schemas.messages import ParserDiscordMessages
 from nemli.services.messages import parse_discord_messages
 
+from loguru import logger
+
+
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
 openai_client = OpenAI(api_key=settings.openai_api_key)
 
@@ -47,8 +50,8 @@ async def summarize_command(
         if bot_message := parsed_discord_messages.bot_message:
             await interaction.followup.send(
                 (
-                    "Um resumo já foi criado recentemente, e se encontra em "
-                    f"{message_count - bot_message.position}/{message_count}:"
+                    "Nemli: um resumo já foi criado recentemente, e se encontra em "
+                    f"{message_count - bot_message.position}/{message_count}:\n\n"
                     f"[Último resumo]({bot_message.jump_url})"
                 )
             )
@@ -80,10 +83,11 @@ async def summarize_command(
 
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
-        response_list = response_to_list(summary, header=f"Resumo das últimas {message_count} mensagens")
+        response_list = response_to_list(summary, header=f"# Resumo das últimas {message_count} mensagens")
         for resp in response_list:
             await interaction.followup.send(resp)
-    except Exception:
+    except Exception as e:
+        logger.exception(e)
         await interaction.followup.send(
             "Ocorreu um erro na aplicação. Contate um administrador para resolver o problema."
         )
@@ -96,8 +100,8 @@ def response_to_list(summary, header, counter=0):
     l_marker = "\n"
 
     # Small responses
-    if len(summary) < msg_char_lim:
-        return [summary]
+    if len(header + l_marker + summary) < msg_char_lim:
+        return [header + l_marker + summary]
 
     # Line breaks
     line_positions = [i for i, sub in enumerate(summary[: -len(l_marker)]) if sub == l_marker]

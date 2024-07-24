@@ -2,6 +2,7 @@ import pytest
 
 from nemli.schemas.messages import Message, ParserDiscordMessages
 from nemli.services.messages import parse_discord_messages
+from nemli.services.messages import is_summary_link_message
 from tests.extras.mocks import (
     CREATED_AT,
     mock_discord_client_user,
@@ -56,3 +57,14 @@ def test_parse_discord_messages(user_bot, messages, parsed: dict):
     parsed_discord_messages: ParserDiscordMessages = parse_discord_messages(user_bot=user_bot, messages=messages)
     assert parsed_discord_messages.messages == parsed.get("messages", None)
     assert parsed_discord_messages.bot_message == parsed.get("bot_message", None)
+
+
+def test_is_summary_link_message_bypass_normal_summary(bot_summary_example):
+    assert is_summary_link_message(bot_summary_example) is False
+
+
+def test_is_summary_link_message_detect_link_summary():
+    msg = """\
+Nemli: Um resumo já foi criado recentemente, e se encontra em 29/100: ...
+"""
+    assert is_summary_link_message(msg) is True
