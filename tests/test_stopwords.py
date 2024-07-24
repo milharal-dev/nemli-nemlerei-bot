@@ -1,22 +1,9 @@
 import pytest
 
+from typing import Callable
+
 from nemli.nlp.messages import clean_up_stopwords
-
-import nltk
-
-
-def setup_nltk():
-    try:
-        nltk.data.find("corpora/stopwords")
-    except LookupError:
-        nltk.download("stopwords")
-    try:
-        nltk.data.find("tokenizers/punkt")
-    except LookupError:
-        nltk.download("punkt")
-
-
-setup_nltk()
+from tests.conftest import setup_nltk_stopwords
 
 
 @pytest.mark.parametrize(
@@ -36,5 +23,6 @@ setup_nltk()
         ),
     ],
 )
-def test_clean_up_stopwords(message: str, expected: str):
+def test_clean_up_stopwords(setup_nltk_stopwords: Callable[[], None], message: str, expected: str):
+    setup_nltk_stopwords()
     assert clean_up_stopwords(message) == expected
