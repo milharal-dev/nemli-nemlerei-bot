@@ -7,11 +7,11 @@ authors = [
     { name = "Mateus Reis", email = "mateuspsvreis@gmail.com" },
 ]
 dependencies = [
-    "requests>=2.32.3",
     "pydantic-settings>=2.3.4",
     "openai>=1.37.0",
     "nextcord>=2.6.0",
     "setuptools>=71.1.0",
+    "nltk>=3.8.1",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
