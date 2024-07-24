@@ -2,7 +2,7 @@ repos:
   - repo: local
     hooks:
       - id: pre-commit-hook
-        name: 🔄 - Running pre-commit hook...\n
+        name: 🔄 - Running pre-commit hook...
         entry: ./pre-commit.sh
         language: script
         always_run: true
