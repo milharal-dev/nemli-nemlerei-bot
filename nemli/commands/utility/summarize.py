@@ -36,8 +36,8 @@ async def summarize_command(
         messages = await channel.history(limit=message_count).flatten()  # type: ignore
         messages_content = "\n".join(
             [
-                f"{msg.author}: {clean_up_stopwords(msg.content)}"
-                for msg in messages
+                f"**{msg.author.global_name or msg.author.name}**: {clean_up_stopwords(msg.content)}"
+                for msg in reversed(messages)
                 if msg.content and msg.author != bot.user
             ]
         )  # Here we are creating a string with the content of the last 100 messages
