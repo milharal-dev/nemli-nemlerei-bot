@@ -10,9 +10,9 @@ from nemli.config import settings
 from loguru import logger
 
 
-def _is_summary_message(message_content: str) -> bool:
+def is_summary_link_message(message_content: str) -> bool:
     logger.debug(message_content)
-    return message_content is not None and not message_content.lower().startswith("nemli:")
+    return message_content.lower().startswith("nemli:")
 
 
 def parse_discord_messages(
@@ -38,7 +38,7 @@ def parse_discord_messages(
                 created_at=msg.created_at,
             )
 
-        if is_bot_message and _is_summary_message(message_content):
+        if is_bot_message and message and not is_summary_link_message(message_content):
             bot_message = message
         elif not is_bot_message and message:
             parsed_messages.append(message)
