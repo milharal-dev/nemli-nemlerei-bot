@@ -41,14 +41,16 @@ ignore_missing_imports = true
 exclude = [".venv"]
 
 [tool.black]
-line-length = 119
+line-length = 120
+enable-unstable-feature = ["string_processing"]
+
 
 [tool.pdm.scripts]
 lint = { composite = ["flake8", "mypy"] }
 test = "pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term"
 tests = { composite = ["test test"] }
-format = "black nemli/ tests/"
-check = { composite = ["lint nemli/", "test test"] }
+format = "black nemli/ tests/ --preview"
+check = { composite = ["lint nemli/ tests/", "test tests/"] }
 
 
 [project.scripts]

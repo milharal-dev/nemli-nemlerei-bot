@@ -14,7 +14,10 @@ from nemli.nlp.messages import clean_up_stopwords
             "que não provoca morte faz que eu fique forte .",
         ),
         (
-            "A vantagem de ter péssima memória é divertir-se muitas vezes com as mesmas coisas boas como se fosse a primeira vez.",
+            (
+                "A vantagem de ter péssima memória é divertir-se muitas vezes com as mesmas coisas boas como se fosse a"
+                " primeira vez."
+            ),
             "vantagem ter péssima memória divertir-se muitas vezes mesmas coisas boas primeira vez .",
         ),
     ],

@@ -1,10 +1,27 @@
 repos:
   - repo: local
     hooks:
-      - id: pre-commit-hook
-        name: 🔄 - Running pre-commit hook...
-        entry: ./pre-commit.sh
-        language: script
+      - id: update-dependencies
+        name: 🔄 - Updating locally installed dependencies...
+        entry: bash -c "pdm install"
+        language: system
         always_run: true
-        files: \.(py)$
-        types: [python]
+        verbose: true
+      - id: format-files
+        name: 🔄 - Formatting files...
+        entry: bash -c "pdm format"
+        language: system
+        always_run: true
+        verbose: true
+      - id: lint-files
+        name: 🔄 - Checking files for linting errors...
+        entry: bash -c "pdm lint nemli/ tests/"
+        language: system
+        always_run: true
+        verbose: true
+      - id: test-suite
+        name: 🔄 - Running test suite...
+        entry: bash -c "pdm test tests/"
+        language: system
+        always_run: true
+        verbose: true
