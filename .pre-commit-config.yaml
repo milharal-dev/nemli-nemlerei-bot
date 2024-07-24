@@ -2,14 +2,14 @@ repos:
   - repo: local
     hooks:
       - id: pdm-install
-        name: Checking if local dependencies are up to date
+        name: 🔄 - Checking if local dependencies are up to date
         entry: ./pre-commit/run-pdm-install.sh
         language: script
         always_run: true
         types: [python]
 
       - id: pdm-format
-        name: Checking code is properly formatted
+        name: 🔄 - Checking code is properly formatted
         entry: ./pre-commit/run-pdm-format.sh
         language: script
         always_run: true
@@ -17,7 +17,7 @@ repos:
         types: [python]
 
       - id: pdm-test
-        name: Running test suite
+        name: 🔄 - Running test suite
         entry: ./pre-commit/run-pdm-test.sh
         language: script
         always_run: true
