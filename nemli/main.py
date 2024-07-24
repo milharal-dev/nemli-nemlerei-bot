@@ -44,6 +44,7 @@ def load_commands():
 
 # This is the entrypoint for the bot, it will run the bot and load the slash commands
 def run():
+    nltk_download("punkt")  # Download nltk punkt
     nltk_download("stopwords")  # Download nltk stopwords
     load_commands()
     bot.run(settings.discord_token)
