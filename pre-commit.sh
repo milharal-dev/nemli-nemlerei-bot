@@ -1,51 +1,39 @@
 #!/bin/sh
 
-(
+LOG_FILE="pre-commit.log"
+
+{
   echo "🔄 - Attempting to update dependencies..."
-  true;
-) &&
-pdm install ||
-(
-  echo "❌ - Some dependencies are out of date!"
-  false;
-)
+  pdm install
+  if [ $? -ne 0 ]; then
+    echo "\n❌ - Some dependencies are out of date!"
+    exit 1
+  fi
 
-(
   echo "✅ - All dependencies are up to date!"
-  echo -e "\n"
-  echo "🔄 - Attempting to format code now..."
-  true;
-) &&
-pdm format ||
-(
-  echo "❌ - Failed to format code!"
-  false;
-)
+  echo "\n🔄 - Attempting to format the code now...\n"
+  pdm format
+  if [ $? -ne 0 ]; then
+    echo "\n❌ - Failed to format code!"
+    exit 1
+  fi
 
-(
-  echo "✅ - Files formatted successfully!"
-  echo -e "\n"
-  echo "🔄 - Attempting to lint now..."
-  true; 
-) &&
-pdm lint nemli/ tests/ ||
-(
-  echo "❌ - Linting failed!"
-  false;
-)
+  echo "\n✅ - Files formatted successfully!"
+  echo "\n🔄 - Attempting to lint now...\n"
+  pdm lint nemli/ tests/
+  if [ $? -ne 0 ]; then
+    echo "\n❌ - Linting failed!"
+    exit 1
+  fi
 
-(
-  echo "✅ - Linting passed!"
-  echo -e "\n"
-  echo "🔄 - Attempting to run test suite now..."
-  true;
-) &&
-pdm test ||
-(
-  echo "❌ - Test suite failed!"
-  false;
-)
+  echo "\n✅ - Linting passed!"
+  echo "\n🔄 - Attempting to run the test suite now..."
+  pdm test
+  if [ $? -ne 0 ]; then
+    echo "\n❌ - Test suite failed!"
+    exit 1
+  fi
 
-echo "✅ - Test suite passed!" &&
-echo -e "\n" &&
-echo "🚀 - I am now committing this!"
+  echo "\n✅ - Test suite passed!"
+  echo "🚀 - I am now committing this!"
+} 2>&1 | tee "$LOG_FILE"
