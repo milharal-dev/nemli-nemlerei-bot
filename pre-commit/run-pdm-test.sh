@@ -1,19 +1,9 @@
 #!/bin/bash
-echo "🔄 Starting pdm test..."
+echo "🔄 - Attempting to run test suite..."
 
-# Run pdm test and capture output
-output=$(pdm run test)
-status=$?
-
-if [[ $status -eq 0 ]]; then
-  if [[ $output == *"collected 0 items"* ]]; then
-    echo "⚠️ - No tests were run, please add tests to your project!"
-    echo "✅ - Test suite passed!"
-    echo "🚀 - I am committing this now!"
-  else
-    echo "✅ pdm test completed successfully!"
-  fi
+if pdm tests; then
+  echo "✅ - Test suite passed!"
 else
-  echo "❌ pdm test failed!"
+  echo "❌ - Test suite failed!"
   exit 1
 fi

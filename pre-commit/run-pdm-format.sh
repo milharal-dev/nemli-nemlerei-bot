@@ -1,16 +1,8 @@
 #!/bin/bash
-echo "🔄 Starting pdm format..."
+echo "🔄 - Attempting to format code..."
 
-output=$(pdm run format)
-status=$?
-
-if [[ $status -eq 0 ]]; then
-  if [[ $output == *"reformatted"* ]]; then
-    echo "✅ - Code formatted successfully, now running tests..."
-  else
-    echo "⚠️  $(echo $output | grep -iP "no files (to|were) reformatted" | xargs)"
-    echo "✅ - No files needed to be formatted, now running tests...."
-  fi
+if pdm format; then
+  echo "✅ - Files formatted successfully!"
 else
   echo "❌ - Failed to format code!"
   exit 1

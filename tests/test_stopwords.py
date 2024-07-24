@@ -2,6 +2,22 @@ import pytest
 
 from nemli.nlp.messages import clean_up_stopwords
 
+import nltk
+
+
+def setup_nltk():
+    try:
+        nltk.data.find("corpora/stopwords")
+    except LookupError:
+        nltk.download("stopwords")
+    try:
+        nltk.data.find("tokenizers/punkt")
+    except LookupError:
+        nltk.download("punkt")
+
+
+setup_nltk()
+
 
 @pytest.mark.parametrize(
     "message,expected",

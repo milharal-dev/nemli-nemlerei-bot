@@ -1,20 +1,25 @@
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-
   - repo: local
     hooks:
+      - id: pdm-install
+        name: Checking if local dependencies are up to date
+        entry: ./pre-commit/run-pdm-install.sh
+        language: script
+        always_run: true
+        types: [python]
+
       - id: pdm-format
-        name: pdm format
+        name: Checking code is properly formatted
         entry: ./pre-commit/run-pdm-format.sh
-        language: system
+        language: script
+        always_run: true
+        files: \.(py)$
         types: [python]
 
       - id: pdm-test
-        name: pdm test
+        name: Running test suite
         entry: ./pre-commit/run-pdm-test.sh
-        language: system
+        language: script
+        always_run: true
+        files: \.(py)$
         types: [python]
