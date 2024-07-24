@@ -4,7 +4,7 @@
 set -e  # Exit immediately if a command exits with a non-zero status.
 
 echo "🔄 - Attempting to update dependencies..."
-if stdbuf -oL -eL pdm install; then
+if pdm install 2>&1 | tee /dev/tty; then
   echo "✅ - All dependencies are up to date!"
 else
   echo "❌ - Some dependencies are out of date!"
@@ -12,7 +12,7 @@ else
 fi
 
 echo "🔄 - Attempting to format code..."
-if stdbuf -oL -eL pdm format; then
+if pdm format 2>&1 | tee /dev/tty; then
   echo "✅ - Files formatted successfully!"
 else
   echo "❌ - Failed to format code!"
@@ -20,7 +20,7 @@ else
 fi
 
 echo "🔄 - Attempting to run test suite..."
-if stdbuf -oL -eL pdm tests; then
+if pdm tests 2>&1 | tee /dev/tty; then
   echo "✅ - Test suite passed!"
 else
   echo "❌ - Test suite failed!"
