@@ -47,8 +47,8 @@ async def summarize_command(
         if bot_message := parsed_discord_messages.bot_message:
             await interaction.followup.send(
                 (
-                    "Um resumo já foi criado recentemente, e se encontra em "
-                    f"{message_count - bot_message.position}/{message_count}:"
+                    "Nemli: um resumo já foi criado recentemente, e se encontra em "
+                    f"{message_count - bot_message.position}/{message_count}:\n\n"
                     f"[Último resumo]({bot_message.jump_url})"
                 )
             )
@@ -96,8 +96,8 @@ def response_to_list(summary, header, counter=0):
     l_marker = "\n"
 
     # Small responses
-    if len(summary) < msg_char_lim:
-        return [summary]
+    if len(header + summary) < msg_char_lim:
+        return [header + summary]
 
     # Line breaks
     line_positions = [i for i, sub in enumerate(summary[: -len(l_marker)]) if sub == l_marker]
