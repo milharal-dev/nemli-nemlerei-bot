@@ -7,8 +7,11 @@ from nemli.nlp.messages import clean_up_stopwords
 from nemli.schemas.messages import Message, ParserDiscordMessages
 from nemli.config import settings
 
+from loguru import logger
+
 
 def _is_summary_message(message_content: str) -> bool:
+    logger.debug(message_content)
     return message_content is not None and not message_content.lower().startswith("nemli:")
 
 
