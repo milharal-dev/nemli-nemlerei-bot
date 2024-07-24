@@ -66,9 +66,39 @@ async def summarize_command(
 
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
-        await interaction.followup.send(f"## Resumo das últimas {message_count} mensagens:\n{summary[:1900]}")
-    except Exception as err:
-        print(err)
+        response_list = response_to_list(summary, header=f"Resumo das últimas {message_count} mensagens")
+        for resp in response_list:
+            await interaction.followup.send(resp)
+    except Exception:
         await interaction.followup.send(
             "Ocorreu um erro na aplicação. Contate um administrador para resolver o problema."
         )
+
+
+def response_to_list(summary, header, counter=0):
+    counter += 1
+    msg_char_lim = 1900
+    msg_header = header + f", parte {counter}:\n"
+    l_marker = "\n"
+
+    # Small responses
+    if len(summary) < msg_char_lim:
+        return [summary]
+
+    # Line breaks
+    line_positions = [i for i, sub in enumerate(summary[: -len(l_marker)]) if sub == l_marker]
+    line_break = (
+        (
+            max([t for t in line_positions if t < msg_char_lim])
+            if any(map(lambda x: x < msg_char_lim, line_positions))
+            else None
+        )
+        if l_marker in summary
+        else None
+    )
+
+    # Big responses
+    if line_break:
+        return [msg_header + summary[:line_break], *response_to_list(summary[line_break:], header, counter)]
+    else:
+        return [msg_header + summary[:msg_char_lim], *response_to_list(summary[msg_char_lim:], header, counter)]
