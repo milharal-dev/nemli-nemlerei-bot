@@ -1,9 +1,5 @@
 import pytest
-
-from typing import Callable
-
 from nemli.nlp.messages import clean_up_stopwords
-from tests.conftest import setup_nltk_stopwords
 
 
 @pytest.mark.parametrize(
@@ -23,6 +19,5 @@ from tests.conftest import setup_nltk_stopwords
         ),
     ],
 )
-def test_clean_up_stopwords(setup_nltk_stopwords: Callable[[], None], message: str, expected: str):
-    setup_nltk_stopwords()
+def test_clean_up_stopwords(setup_nltk_stopwords, message: str, expected: str):
     assert clean_up_stopwords(message) == expected

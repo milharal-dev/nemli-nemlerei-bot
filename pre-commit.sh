@@ -18,7 +18,7 @@ else
   exit 1
 fi
 
-if stdbuf -oL -eL pdm tests | tee /dev/tty; then
+if stdbuf -oL -eL pdm test | tee /dev/tty; then
   echo -e "✅ - Test suite passed!\n\n🚀 - I am now committing this!" | stdbuf -oL -eL tee /dev/tty
 else
   echo "❌ - Test suite failed!" | stdbuf -oL -eL tee /dev/tty
