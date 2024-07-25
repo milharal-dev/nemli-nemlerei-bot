@@ -1,13 +1,12 @@
 from typing import Optional
 
+from loguru import logger
 from nextcord import ClientUser
 from nextcord import Message as DiscordMessage
 
+from nemli.config import settings
 from nemli.nlp.messages import clean_up_stopwords
 from nemli.schemas.messages import Message, ParserDiscordMessages
-from nemli.config import settings
-
-from loguru import logger
 
 
 def is_summary_link_message(message_content: str) -> bool:

@@ -67,14 +67,14 @@ async def summarize_command(
                 {
                     "role": "user",
                     "content": (
-                        "Resuma a seguinte conversa por assuntos, agrupando assuntos que forem similares o "
-                        "máximo possível e relacionado os assuntos com os usuários que participem da discussão:\n\n"
-                        f"{messages_content}"
+                        "Resuma a seguinte conversa por assuntos, agrupando assuntos similares o "
+                        "máximo possível e relacionado os usuários participantes aos assuntos que eles discutiram.\n\n"
+                        f"```{messages_content}```"
                     ),
                 },
             ],
             max_tokens=4000,
-            temperature=0.5,
+            temperature=settings.openai_temperature,
         )
 
         message_count_url: str = f"{message_count}"
@@ -83,6 +83,7 @@ async def summarize_command(
 
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
+        summary = summary.replace("####", "###")
         response_list = response_to_list(summary, header=f"# Resumo das últimas {message_count_url} mensagens")
         for resp in response_list:
             await interaction.followup.send(resp)
