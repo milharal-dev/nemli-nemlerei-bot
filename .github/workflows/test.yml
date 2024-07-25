@@ -1,0 +1,33 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: flake8+mypy+pytest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ['3.12']
+        os: [ubuntu-latest]
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+
+      - name: Install project
+        run: pdm install
+
+      - name: Run linters
+        run: pdm lint nemli/
+
+      - name: Run tests
+        run: pdm tests
