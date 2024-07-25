@@ -22,7 +22,6 @@ license = { text = "MIT" }
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-
 [tool.pdm]
 distribution = true
 
@@ -34,24 +33,28 @@ dev = [
     "black>=24.4.2",
     "pytest-cov>=5.0.0",
     "types-requests>=2.32.0.20240712",
+    "pre-commit>=3.7.1",
 ]
 
 [tool.mypy]
 ignore_missing_imports = true
 exclude = [".venv"]
 
+[tool.pytest]
+exclude = [".venv"]
+
 [tool.black]
-line-length = 119
+line-length = 120
+enable-unstable-feature = ["string_processing"]
 
 [tool.pdm.scripts]
 lint = { composite = ["flake8", "mypy"] }
 _mock_env = "env NEMLI_DISCORD_TOKEN=xxx NEMLI_OPENAI_API_KEY=yyy"
 test = { composite = ["_mock_env pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k"]}
 tests = { composite = ["test test"] }
-format = "black nemli/ tests/"
-check = { composite = ["lint nemli/", "test test"] }
+format = "black nemli/ tests/ --preview"
+check = { composite = ["lint nemli/ tests/", "tests"] }
 all = { composite = ["format", "check"] }
-
 
 [project.scripts]
 nemli = "nemli.main:run"

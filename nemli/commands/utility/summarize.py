@@ -49,11 +49,9 @@ async def summarize_command(
         # If we have bot message resume in the last {message_count} messages, we will not create a new summary
         if bot_message := parsed_discord_messages.bot_message:
             await interaction.followup.send(
-                (
-                    "Nemli: um resumo já foi criado recentemente, e se encontra em "
-                    f"{message_count - bot_message.position}/{message_count}:\n\n"
-                    f"[Último resumo]({bot_message.jump_url})"
-                )
+                "Nemli: um resumo já foi criado recentemente, e se encontra em "
+                f"{message_count - bot_message.position}/{message_count}:\n\n"
+                f"[Último resumo]({bot_message.jump_url})"
             )
             return
 
