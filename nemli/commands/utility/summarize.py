@@ -81,7 +81,7 @@ async def summarize_command(
 
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
-        response_list = response_to_list(summary, header=f"# Resumo das últimas {message_count} mensagens")
+        response_list = response_to_list(summary, header=f"Resumo das últimas {message_count} mensagens")
         for resp in response_list:
             await interaction.followup.send(resp)
     except Exception as e:
@@ -91,30 +91,46 @@ async def summarize_command(
         )
 
 
-def response_to_list(summary, header, counter=0):
+def response_to_list(summary, header, counter=0, msg_char_lim=1900):
     counter += 1
-    msg_char_lim = 1900
-    msg_header = header + f", parte {counter}:\n"
-    l_marker = "\n"
+    msg_header = header + f", parte {counter}:\n" if header else ""
 
-    # Small responses
-    if len(header + l_marker + summary) < msg_char_lim:
-        return [header + l_marker + summary]
-
-    # Line breaks
-    line_positions = [i for i, sub in enumerate(summary[: -len(l_marker)]) if sub == l_marker]
-    line_break = (
-        (
-            max([t for t in line_positions if t < msg_char_lim])
-            if any(map(lambda x: x < msg_char_lim, line_positions))
+    def get_break(marker):
+        positions = [
+            i
+            for i, sub in enumerate([summary[j : j + len(marker)] for j in range(len(summary) - -len(marker))])
+            if sub == marker
+        ]
+        return (
+            (
+                max([t for t in positions if t < msg_char_lim])
+                if any(map(lambda x: x < msg_char_lim, positions))
+                else None
+            )
+            if marker in summary
             else None
         )
-        if l_marker in summary
-        else None
-    )
+
+    # Small responses
+    if len(msg_header + summary) < msg_char_lim:
+        return [msg_header + summary]
+
+    header_break = get_break("\n#")
+    line_break = get_break("\n")
 
     # Big responses
-    if line_break:
-        return [msg_header + summary[:line_break], *response_to_list(summary[line_break:], header, counter)]
+    if header_break:
+        return [
+            msg_header + summary[:header_break],
+            *response_to_list(summary[header_break:], header, counter, msg_char_lim),
+        ]
+    elif line_break:
+        return [
+            msg_header + summary[:line_break],
+            *response_to_list(summary[line_break:], header, counter, msg_char_lim),
+        ]
     else:
-        return [msg_header + summary[:msg_char_lim], *response_to_list(summary[msg_char_lim:], header, counter)]
+        return [
+            msg_header + summary[:msg_char_lim],
+            *response_to_list(summary[msg_char_lim:], header, counter, msg_char_lim),
+        ]
