@@ -98,7 +98,7 @@ def response_to_list(summary, header, counter=0, msg_char_lim=1900):
     def get_break(marker):
         positions = [
             i
-            for i, sub in enumerate([summary[j : j + len(marker)] for j in range(len(summary) - -len(marker))])
+            for i, sub in enumerate([summary[j: j + len(marker)] for j in range(len(summary) - -len(marker))])
             if sub == marker
         ]
         return (
