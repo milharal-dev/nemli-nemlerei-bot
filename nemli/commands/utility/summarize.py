@@ -1,4 +1,5 @@
 import nextcord
+from loguru import logger
 from nextcord.ext import commands
 from openai import OpenAI
 
@@ -6,9 +7,6 @@ from nemli import bot
 from nemli.config import settings
 from nemli.schemas.messages import ParserDiscordMessages
 from nemli.services.messages import parse_discord_messages
-
-from loguru import logger
-
 
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
 openai_client = OpenAI(api_key=settings.openai_api_key)
@@ -79,9 +77,13 @@ async def summarize_command(
             temperature=0.5,
         )
 
+        message_count_url: str = f"{message_count}"
+        if first_message := parsed_discord_messages.messages[0]:
+            message_count_url = f"[{message_count}]({first_message.jump_url})"
+
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
-        response_list = response_to_list(summary, header=f"Resumo das últimas {message_count} mensagens")
+        response_list = response_to_list(summary, header=f"# Resumo das últimas {message_count_url} mensagens")
         for resp in response_list:
             await interaction.followup.send(resp)
     except Exception as e:
