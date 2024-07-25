@@ -20,6 +20,8 @@ from nemli.nlp.messages import clean_up_stopwords
             ),
             "vantagem ter péssima memória divertir-se muitas vezes mesmas coisas boas primeira vez .",
         ),
+        ("", ""),
+        (None, ""),
     ],
 )
 def test_clean_up_stopwords(setup_nltk_stopwords, message: str, expected: str):

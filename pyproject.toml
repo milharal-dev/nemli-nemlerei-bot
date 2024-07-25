@@ -1,6 +1,6 @@
 [project]
 name = "nemli"
-version = "0.1.0"
+version = "0.2.0"
 description = "Um bot de discord para criar resumos baseado nas últimas mensagens de um canal"
 authors = [
     { name = "Manoel Vilela", email = "manoel_vilela@engineer.com" },
@@ -12,6 +12,7 @@ dependencies = [
     "nextcord>=2.6.0",
     "setuptools>=71.1.0",
     "nltk>=3.8.1",
+    "loguru>=0.7.2",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -20,7 +21,6 @@ license = { text = "MIT" }
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
-
 
 [tool.pdm]
 distribution = true
@@ -40,18 +40,21 @@ dev = [
 ignore_missing_imports = true
 exclude = [".venv"]
 
+[tool.pytest]
+exclude = [".venv"]
+
 [tool.black]
 line-length = 120
 enable-unstable-feature = ["string_processing"]
 
-
 [tool.pdm.scripts]
 lint = { composite = ["flake8", "mypy"] }
-test = "pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term"
+_mock_env = "env NEMLI_DISCORD_TOKEN=xxx NEMLI_OPENAI_API_KEY=yyy"
+test = { composite = ["_mock_env pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k"]}
 tests = { composite = ["test test"] }
 format = "black nemli/ tests/ --preview"
-check = { composite = ["lint nemli/ tests/", "test tests/"] }
-
+check = { composite = ["lint nemli/ tests/", "tests"] }
+all = { composite = ["format", "check"] }
 
 [project.scripts]
 nemli = "nemli.main:run"
