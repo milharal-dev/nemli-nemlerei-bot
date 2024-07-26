@@ -6,6 +6,7 @@ from openai import OpenAI
 from nemli import bot
 from nemli.config import settings
 from nemli.schemas.messages import ParserDiscordMessages
+from nemli.schemas.prompt_style import prompt_types
 from nemli.services.messages import parse_discord_messages
 
 # Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
@@ -25,6 +26,12 @@ async def summarize_command(
         min_value=20,
         max_value=1000,
         default=settings.discord_max_messages,
+    ),
+    prompt_type: str = nextcord.SlashOption(
+        name="tipo_prompt",
+        description="Tipo de prompt a ser usado",
+        required=False,
+        choices=prompt_types,
     ),
 ):
     print(f"INFO: The summarize command has been called by: @{interaction.user}")
@@ -55,6 +62,8 @@ async def summarize_command(
 
         messages_content = " ".join([f"{msg.author}: {msg.content}" for msg in parsed_discord_messages.messages or []])
 
+        user_prompt = prompt_types.get(prompt_type, prompt_types.get("padrão", ""))
+        prompt_type = prompt_type or "padrão"
         # Here we call the OpenAI API to create a summary of the last {message_count}
         # messages in the channel with the previously created variables
         response = openai_client.chat.completions.create(
@@ -66,11 +75,7 @@ async def summarize_command(
                 },
                 {
                     "role": "user",
-                    "content": (
-                        "Resuma a seguinte conversa por assuntos, agrupando assuntos similares o "
-                        "máximo possível e relacionado os usuários participantes aos assuntos que eles discutiram.\n\n"
-                        f"```{messages_content}```"
-                    ),
+                    "content": f"{user_prompt}:\n\n{messages_content}",
                 },
             ],
             max_tokens=4000,
@@ -84,7 +89,8 @@ async def summarize_command(
         # Here we are getting the summary from the response and sending it to the user
         summary = response.choices[0].message.content.strip()  # type: ignore
         summary = summary.replace("####", "###")
-        response_list = response_to_list(summary, header=f"# Resumo das últimas {message_count_url} mensagens")
+        header = f"# Resumo das últimas {message_count_url} mensagens (tipo: {prompt_type})"
+        response_list = response_to_list(summary, header=header)
         for resp in response_list:
             await interaction.followup.send(resp)
     except Exception as e:
