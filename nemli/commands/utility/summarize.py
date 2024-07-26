@@ -100,20 +100,20 @@ async def summarize_command(
         )
 
 
-def response_to_list(summary, header, counter=0, msg_char_lim=1900):
+def response_to_list(summary, header, counter=0, msg_char_lim=1950):
     counter += 1
     msg_header = header + f", parte {counter}:\n" if header else ""
 
     def get_break(marker):
         positions = [
             i
-            for i, sub in enumerate([summary[j: j + len(marker)] for j in range(len(summary) - -len(marker))])
+            for i, sub in enumerate([summary[j:j + len(marker)] for j in range(len(summary) - -len(marker))])
             if sub == marker
         ]
         return (
             (
-                max([t for t in positions if t < msg_char_lim])
-                if any(map(lambda x: x < msg_char_lim, positions))
+                max([t for t in positions if t < (msg_char_lim - len(msg_header))])
+                if any(map(lambda x: x < (msg_char_lim - len(msg_header)), positions))
                 else None
             )
             if marker in summary
@@ -121,25 +121,12 @@ def response_to_list(summary, header, counter=0, msg_char_lim=1900):
         )
 
     # Small responses
-    if len(msg_header + summary) < msg_char_lim:
+    if len(summary) < (msg_char_lim - len(msg_header)):
         return [msg_header + summary]
 
-    header_break = get_break("\n#")
-    line_break = get_break("\n")
-
     # Big responses
-    if header_break:
-        return [
-            msg_header + summary[:header_break],
-            *response_to_list(summary[header_break:], header, counter, msg_char_lim),
-        ]
-    elif line_break:
-        return [
-            msg_header + summary[:line_break],
-            *response_to_list(summary[line_break:], header, counter, msg_char_lim),
-        ]
-    else:
-        return [
-            msg_header + summary[:msg_char_lim],
-            *response_to_list(summary[msg_char_lim:], header, counter, msg_char_lim),
-        ]
+    limit = get_break("\n#") or get_break("\n") or msg_char_lim
+    return [
+        msg_header + summary[:limit],
+        *response_to_list(summary[limit:], header, counter, msg_char_lim),
+    ]
