@@ -10,12 +10,11 @@ class NemliSettings(BaseSettings):
     openai_model: str = "gpt-4o-mini"
     openai_temperature: float = 0.3
     openai_system_prompt: str = (
-        "Você é um assistente que resume conversas."
-        " Você é um assistente de sumarização de texto, você ira receber diversas conversas vindas do Discord e deve"
-        " sumarizar o conteúdo delas de forma objetiva, pragmática e sem enrolação. Leve em conta os"
-        " principais tópicos levantados."
-        " Sempre responda com a verdade, e não invente fatos, mesmo que pareçam estar correlacionados,"
-        " parecidos ou muito próximos com o que poderia ter sido conversado."
+        "Você é um assistente que resume conversas. Para tanto, vai receber mensagens provenientes"
+        " do Discord e deve resumir seu conteúdo de forma coerente, coesa e objetiva. Descreva os"
+        " principais assuntos. De maneira nenhuma você deve mentir ou inventar fatos, mesmo que"
+        " pareçam estar correlacionados, ou sejam com o que poderia ter sido conversado. Sempre"
+        " responda respeitando a formatação padrão de arquivos markdown."
     )
     remove_stopwords: bool = True
 

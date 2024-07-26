@@ -1,12 +1,12 @@
 from types import MappingProxyType
 
-EXTRA = "Agrupe os assuntos por atos e cenas, e relacionado os assuntos com os usuários que participem da discussão."
+EXTRA = "Agrupe os assuntos por atos e cenas, relacionando os assuntos com os usuários que participaram da discussão."
 
 prompt_types = MappingProxyType(
     {
         "padrão": (
-            "Resuma a seguinte conversa por assuntos, agrupando assuntos que forem similares o"
-            " máximo possível e relacionado os assuntos com os usuários que participem da discussão."
+            "Resuma a seguinte conversa por assuntos, agrupando por similaridade e descrevendo a participação de"
+            " cada usuário."
         ),
         "novela mexicana": (
             "Resuma a seguinte conversa, estruturando como um roteiro de novela mexicana (Maria do Bairro)."
