@@ -93,6 +93,12 @@ async def summarize_command(
         response_list = response_to_list(summary, header=header)
         for resp in response_list:
             await interaction.followup.send(resp)
+    except nextcord.errors.Forbidden as e:
+        logger.exception(e)
+        await interaction.followup.send(
+            "Esse bot experimental não pode ser usado nesse canal, "
+            "é reservado aos desenvolvedores. Tente usar o @Nemli Nemlerei."
+        )
     except Exception as e:
         logger.exception(e)
         await interaction.followup.send(
