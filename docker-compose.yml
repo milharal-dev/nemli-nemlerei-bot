@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  nemli-nemlerei-bot:
+    build:
+      context: .
+    env_file: .env
+    volumes:
+      - ./.env:/app/.env
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 400M
