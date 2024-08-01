@@ -5,6 +5,7 @@ from nltk import download as nltk_download
 from nemli import bot
 from nemli.commands.utility.help import help_command
 from nemli.commands.utility.ping import ping_command
+from nemli.commands.utility.refute import refute_command
 from nemli.commands.utility.summarize import summarize_command
 from nemli.config import settings
 
@@ -34,6 +35,7 @@ def load_commands():
         help_command,
         ping_command,
         summarize_command,
+        refute_command,
     ]
 
     for command in belted_commands:

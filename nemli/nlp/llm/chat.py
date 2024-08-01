@@ -15,6 +15,9 @@ class Bot(ABC):
     @abstractmethod
     def summarize(self, prompt: str, messages: str) -> Optional[str]: ...
 
+    @abstractmethod
+    def refute(self, messages: str) -> Optional[str]: ...
+
 
 class OpenAIBot(Bot):
     def __init__(self) -> None:
@@ -45,3 +48,16 @@ class OpenAIBot(Bot):
             },
         ]
         return self._create_chat(messages)
+
+    def refute(self, content: str) -> Optional[str]:
+        messages = [
+            {
+                "role": "system",
+                "content": settings.openai.refute_prompt,
+            },
+            {
+                "role": "user",
+                "content": f"Refute o conteúdo principal dessas mensagens:\n\n{content}",
+            },
+        ]
+        return self._create_chat(messages, temperature=0.7)

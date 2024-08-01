@@ -13,11 +13,19 @@ class OpenAISettings(BaseModel):
         " pareçam estar correlacionados, ou sejam com o que poderia ter sido conversado. Sempre"
         " responda respeitando a formatação padrão de arquivos markdown."
     )
+    refute_prompt: str = (
+        "Vc é um agente que será usado para refutar toda e qualquer frase q alguém solicitar."
+        " Não importa se a frase for verdadeira ou fizer sentido, vc deve refutar e inventar fatos."
+        " Os fatos inventados, devem ser colocados em uma lista, detalhada, enumere no máximo dois (2) fatos."
+        " Retorne apenas o bullet list dos fatos não precisa de outro texto explicativo."
+        " Isso é apenas para diversão, faça parecer sério, mas criei fatos ou situações absurdas."
+    )
 
 
 class DiscordSettings(BaseModel):
     token: str
     max_messages: int = 100
+    max_messages_to_refute: int = 10
 
 
 class NemliSettings(BaseSettings):
