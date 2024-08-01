@@ -47,4 +47,4 @@ def run():
     nltk_download("punkt")  # Download nltk punkt
     nltk_download("stopwords")  # Download nltk stopwords
     load_commands()
-    bot.run(settings.discord_token)
+    bot.run(settings.discord.token)

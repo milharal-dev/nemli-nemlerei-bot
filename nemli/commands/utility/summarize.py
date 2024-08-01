@@ -1,16 +1,15 @@
 import nextcord
 from loguru import logger
 from nextcord.ext import commands
-from openai import OpenAI
 
 from nemli import bot
 from nemli.config import settings
+from nemli.nlp.llm.chat import OpenAIBot
 from nemli.schemas.messages import ParserDiscordMessages
 from nemli.schemas.prompt_style import prompt_types
 from nemli.services.messages import parse_discord_messages
 
-# Here we are loading the OpenAI API key from .env and creating a client instance for the OpenAI API
-openai_client = OpenAI(api_key=settings.openai_api_key)
+openai_client = OpenAIBot()
 
 
 # This is the slash command that will be used to create a summary of
@@ -25,7 +24,7 @@ async def summarize_command(
         required=False,
         min_value=20,
         max_value=1000,
-        default=settings.discord_max_messages,
+        default=settings.discord.max_messages,
     ),
     prompt_type: str = nextcord.SlashOption(
         name="tipo_prompt",
@@ -64,31 +63,19 @@ async def summarize_command(
 
         user_prompt = prompt_types.get(prompt_type, prompt_types.get("padrão", ""))
         prompt_type = prompt_type or "padrão"
+
         # Here we call the OpenAI API to create a summary of the last {message_count}
         # messages in the channel with the previously created variables
-        response = openai_client.chat.completions.create(
-            model=settings.openai_model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": settings.openai_system_prompt,
-                },
-                {
-                    "role": "user",
-                    "content": f"{user_prompt}:\n\n{messages_content}",
-                },
-            ],
-            max_tokens=4000,
-            temperature=settings.openai_temperature,
-        )
+        summary = openai_client.summarize(user_prompt, messages_content)
+        if not summary:
+            await interaction.followup.send("Não foi possível criar um resumo devido a erro de retorno da API.")
+            return
 
         message_count_url: str = f"{message_count}"
         if first_message := parsed_discord_messages.messages[0]:
             message_count_url = f"[{message_count}]({first_message.jump_url})"
 
         # Here we are getting the summary from the response and sending it to the user
-        summary = response.choices[0].message.content.strip()  # type: ignore
-        summary = summary.replace("####", "###")
         header = f"# Resumo das últimas {message_count_url} mensagens (tipo: {prompt_type})"
         response_list = response_to_list(summary, header=header)
         for resp in response_list:
