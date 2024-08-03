@@ -1,4 +1,5 @@
 import nextcord
+from loguru import logger
 
 from nemli import bot
 from nemli.config import settings
@@ -11,8 +12,8 @@ openai_client = OpenAIBot()
 
 @bot.message_command(name="refute")
 async def refute_command(interaction: nextcord.Interaction, reference_message: nextcord.Message):
-    print(f"INFO: The summarize command has been called by: @{interaction.user}")
-    print(f"Refute message: {reference_message.content}")
+    logger.debug(f"INFO: The summarize command has been called by: @{interaction.user}")
+    logger.debug(f"Refute message: {reference_message.content}")
 
     # We defer the response so we avoid timeout errors due to AI processing which could take longer than three seconds
     await interaction.response.defer(with_message=True)

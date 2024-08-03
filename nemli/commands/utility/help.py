@@ -1,5 +1,7 @@
-from nextcord.ext import commands
 import nextcord
+from loguru import logger
+from nextcord.ext import commands
+
 from nemli import bot
 
 
@@ -9,7 +11,7 @@ from nemli import bot
 @bot.slash_command(name="help", description="Mensagem de ajuda")
 @commands.cooldown(1, 10, commands.BucketType.channel)
 async def help_command(interaction: nextcord.Interaction):
-    print(f"INFO: The help command has been called by: @{interaction.user}")
+    logger.debug(f"INFO: The help command has been called by: @{interaction.user}")
     await interaction.response.send_message(
         "Esse bot só tem um propósito: Criar resumos das últimas mensagens enviadas em um canal."
     )

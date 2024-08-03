@@ -33,7 +33,7 @@ async def summarize_command(
         choices=prompt_types,
     ),
 ):
-    print(f"INFO: The summarize command has been called by: @{interaction.user}")
+    logger.debug(f"INFO: The summarize command has been called by: @{interaction.user}")
 
     # We defer the response so we avoid timeout errors due to AI processing which could take longer than three seconds
     await interaction.response.defer(with_message=True)
