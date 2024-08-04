@@ -1,10 +1,12 @@
 import nextcord
+from loguru import logger
 from nextcord.ext import commands
 from nltk import download as nltk_download
 
 from nemli import bot
 from nemli.commands.utility.help import help_command
 from nemli.commands.utility.ping import ping_command
+from nemli.commands.utility.refute import refute_command
 from nemli.commands.utility.summarize import summarize_command
 from nemli.config import settings
 
@@ -12,7 +14,7 @@ from nemli.config import settings
 # This function is called when the bot is ready to be used
 @bot.event
 async def on_ready():
-    print(f"Application/Bot online as {bot.user}")
+    logger.debug(f"Application/Bot online as {bot.user}")
     activity = nextcord.Game("/help")
     await bot.change_presence(status=nextcord.Status.online, activity=activity)
 
@@ -28,18 +30,19 @@ async def on_slash_command_error(interaction: nextcord.Interaction, error):
 # commands folder, providing a cleaner and more organized way to
 # manage them
 def load_commands():
-    print("INFO: Loading commands...")
+    logger.debug("INFO: Loading commands...")
 
     belted_commands = [
         help_command,
         ping_command,
         summarize_command,
+        refute_command,
     ]
 
     for command in belted_commands:
         bot.add_application_command(command)
 
-    print("INFO: Commands loaded successfully!")
+    logger.debug("INFO: Commands loaded successfully!")
 
 
 # This is the entrypoint for the bot, it will run the bot and load the slash commands
@@ -47,4 +50,4 @@ def run():
     nltk_download("punkt")  # Download nltk punkt
     nltk_download("stopwords")  # Download nltk stopwords
     load_commands()
-    bot.run(settings.discord_token)
+    bot.run(settings.discord.token)

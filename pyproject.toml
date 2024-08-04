@@ -49,8 +49,10 @@ enable-unstable-feature = ["string_processing"]
 
 [tool.pdm.scripts]
 lint = { composite = ["flake8", "mypy"] }
-_mock_env = "env NEMLI_DISCORD_TOKEN=xxx NEMLI_OPENAI_API_KEY=yyy"
-test = { composite = ["_mock_env pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k"]}
+_mock_env = "env NEMLI__DISCORD__TOKEN=xxx NEMLI__OPENAI__API_KEY=yyy"
+test = { composite = [
+    "_mock_env pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k",
+] }
 tests = { composite = ["test test"] }
 format = "black nemli/ tests/ --preview"
 check = { composite = ["lint nemli/ tests/", "tests"] }

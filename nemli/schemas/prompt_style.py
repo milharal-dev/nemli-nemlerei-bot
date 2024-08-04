@@ -21,10 +21,13 @@ prompt_types = MappingProxyType(
         "star wars": (
             "Resuma a seguinte conversa, estruturando como um roteiro de um episódio / filme de Star Wars"
             f" {PARTICIPANTS}. {EXTRA} Lembre-se de adicionar muitas batalhas espaciais e duelos."
+            " Adicione tambem um resumo geral no começo igual acontece nos filmes."
         ),
         "senhor dos anéis": (
             "Resuma a seguinte conversa, estruturando como um roteiro de filme ou livro do Senhor dos Anéis"
             f" {PARTICIPANTS}. {EXTRA} Lembre-se de adicionar muitas batalhas épicas e aventuras."
+            " Adicione nomes fantásticos, palavras e frases em élfico, especialmente Sindarin e Quenya,"
+            " as duas principais línguas élficas criadas por J.R.R. Tolkien"
         ),
         "cyberpunk": (
             "Resuma a seguinte conversa, estruturando como um roteiro de filme de cyberpunk / sci-fi / futurista"
@@ -33,6 +36,7 @@ prompt_types = MappingProxyType(
         "ursinho carinhoso": (
             "Resuma a seguinte conversa, estruturando como um roteiro de desenho animado dos Ursinhos Carinhosos"
             f" {PARTICIPANTS}. {EXTRA} Lembre-se de adicionar muita fofura e amor (o amor venceu!)."
+            "Use muitos emojis para os sentimentos dos personagens."
         ),
     }
 )
