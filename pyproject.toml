@@ -53,7 +53,7 @@ _mock_env = "env NEMLI__DISCORD__TOKEN=xxx NEMLI__OPENAI__API_KEY=yyy"
 test = { composite = [
     "_mock_env pytest -vv -p no:cacheprovider --disable-pytest-warnings --cov=nemli --cov-report term -k",
 ] }
-tests = { composite = ["test test"] }
+tests = { composite = ["test test tests/"] }
 format = "black nemli/ tests/ --preview"
 check = { composite = ["lint nemli/ tests/", "tests"] }
 all = { composite = ["format", "check"] }
