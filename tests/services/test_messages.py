@@ -1,8 +1,11 @@
 import pytest
 
 from nemli.schemas.messages import Message, ParserDiscordMessages
-from nemli.services.messages import parse_discord_messages
-from nemli.services.messages import is_summary_link_message
+from nemli.services.messages import (
+    get_member_name,
+    is_summary_link_message,
+    parse_discord_messages,
+)
 from tests.extras.mocks import (
     CREATED_AT,
     mock_discord_client_user,
@@ -53,7 +56,7 @@ DEFAULT_USER = mock_discord_client_user(obj_id=1_000_001)
         ),
     ],
 )
-def test_parse_discord_messages(user_bot, messages, parsed: dict):
+def test_parse_discord_messages(setup_nltk_stopwords, user_bot, messages, parsed: dict):
     parsed_discord_messages: ParserDiscordMessages = parse_discord_messages(user_bot=user_bot, messages=messages)
     assert parsed_discord_messages.messages == parsed.get("messages", None)
     assert parsed_discord_messages.bot_message == parsed.get("bot_message", None)
@@ -68,3 +71,8 @@ def test_is_summary_link_message_detect_link_summary():
 Nemli: Um resumo já foi criado recentemente, e se encontra em 29/100: ...
 """
     assert is_summary_link_message(msg) is True
+
+
+def test_get_member_name():
+    msg = mock_discord_message(obj_id=DEFAULT_OBJ_ID, author=DEFAULT_USER)
+    assert get_member_name(msg) == "Mock"
